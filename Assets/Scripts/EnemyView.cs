@@ -4,38 +4,18 @@ using UnityEngine;
 
 public class EnemyView : MonoBehaviour
 {
-    SpriteRenderer enemy;
+    SpriteRenderer sprite;
 
-    void UpdateHealthState(Vector3 health)
+    void UpdateHealthColor(Vector3 health)
     {
-        enemy.color = new Color(health.x, health.y, health.z, 1);
+        sprite.color = new Color(health.x, health.y, health.z, 256);
     }
-
+    
+    void UpdatePositionAndRotation(Vector3 position,  Vector3 lookDir)
+    {
+        transform.position = position;
+        transform.rotation = Quaternion.LookRotation(lookDir);
+    }
 }
 
-public class EntityData
-{
-    Vector2 position, LookDirection;
 
-    float collisionRange = 1f;
-
-    Vector3 health;
-
-    bool dropReward;
-
-    void InitHealth()
-    {
-        int r = Random.Range(0, 256);
-        int g = Random.Range(0, 256);
-        int b = Random.Range(0, 256);
-
-        health = new Vector3(r, g, b);
-    }
-
-    void TakeDamage(float damage)
-    {
-
-        float selectedHealthbar = Mathf.Min(health.x, health.y);
-    }
-
-}
