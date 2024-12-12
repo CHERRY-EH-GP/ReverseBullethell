@@ -11,7 +11,7 @@ public class AI_Manager : MonoBehaviour
     [Tooltip("Spawn distance from player")]
     public float spawnDistance = 30f;
 
-    Dictionary<EnemyData, EnemyView> enemies;
+    Dictionary<EnemyData, EnemyView> enemies = new Dictionary<EnemyData, EnemyView>();
 
     PlayerData playerData;
 
@@ -27,18 +27,33 @@ public class AI_Manager : MonoBehaviour
 
     public void FixedUpdate()
     {
-        foreach(KeyValuePair<EnemyData, EnemyView> enemyObject in enemies)
+        UpdateAI();
+    }
+
+    private void UpdateAI()
+    {
+        foreach (KeyValuePair<EnemyData, EnemyView> enemyObject in enemies)
         {
             if (!enemyObject.Key.isInView) continue;
 
-            float dist = Vector2.Distance(enemyObject.Key.GetPosition(), playerData.GetPosition());
-            if(dist < enemyObject.Key.GetCollRange() + playerData.GetCollRange())
+            // Handle Movement - EnemyData
+            Vector2 newPosition = Vector2.MoveTowards(enemyObject.Key.Position, playerData.Position, enemyObject.Key.GetSpeed() * Time.deltaTime);
+            enemyObject.Key.Position = newPosition;
+
+            // Handle Movement - EnemyView
+            enemyObject.Value.UpdatePositionAndRotation(newPosition, playerData.Position - enemyObject.Key.Position);
+
+            // Handle "Collisions"
+            float dist = Vector2.Distance(enemyObject.Key.Position, playerData.Position);
+            if (dist < enemyObject.Key.GetCollRange() + playerData.GetCollRange())
             {
                 playerData.TakeDamage(0);
                 enemyObject.Key.TakeDamage(700f);
             }
         }
     }
+
+
 
     public void GenerateEnemies(int count)
     {
@@ -48,8 +63,9 @@ public class AI_Manager : MonoBehaviour
 
             EnemyView _enemyView = Instantiate(enemyView, assignedPos, Quaternion.identity, transform);
 
-            EnemyData _EnemyData = new EnemyData(assignedPos, Random.value < 0.5f, 256f);
+            EnemyData _EnemyData = new EnemyData(assignedPos, 256f, true);
             // TODO add some kind of reward
+            //Random.value < 0.5f
 
             enemies.Add(_EnemyData, _enemyView);
         }

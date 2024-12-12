@@ -41,6 +41,10 @@ public class QRCodereader : MonoBehaviour
         }
         
         _cameraTexture.Play();
+
+        float camRatio = (float)_cameraTexture.width / (float)_cameraTexture.height;
+        _aspectRatioFitter.aspectRatio = camRatio;
+        
         _rawImageBackground.texture = _cameraTexture;
         _isCamAvailable = true;
     }
@@ -48,9 +52,6 @@ public class QRCodereader : MonoBehaviour
     private void UpdateCameraRender()
     {
         if (!_isCamAvailable) return;
-
-        float camRatio = (float)_cameraTexture.width / (float)_cameraTexture.height;
-        _aspectRatioFitter.aspectRatio = camRatio;
 
         int orientation = -_cameraTexture.videoRotationAngle;
         _rawImageBackground.rectTransform.localEulerAngles = new Vector3(0, 0, orientation);

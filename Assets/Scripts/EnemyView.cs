@@ -4,18 +4,20 @@ using UnityEngine;
 
 public class EnemyView : MonoBehaviour
 {
-    SpriteRenderer sprite;
+    public SpriteRenderer sprite;
 
-    void UpdateHealthColor(Vector3 health)
+    public void UpdateHealthColor(Vector3 health)
     {
         sprite.color = new Color(health.x, health.y, health.z, 256);
     }
     
-    void UpdatePositionAndRotation(Vector3 position,  Vector3 lookDir)
+    public void UpdatePositionAndRotation(Vector3 position,  Vector3 lookDir)
     {
-        transform.position = position;
-        transform.rotation = Quaternion.LookRotation(lookDir);
+        sprite.transform.position = position;
+        sprite.transform.up = lookDir;
     }
+
+    public Vector3 GetForward() { return transform.up; }
 }
 
 

@@ -17,20 +17,7 @@ public class QRCodeGenerator : MonoBehaviour
         _storeEncodedTexture = new Texture2D(256, 256);
     }
 
-    private Color32[] Encode(string textForEncoding, int width, int height)
-    {
-        BarcodeWriter writer = new BarcodeWriter()
-        {   
-            Format = BarcodeFormat.QR_CODE,
-            Options =
-            {
-                Height = height,
-                Width = width
-            }
-        };
-        
-        return writer.Write(textForEncoding);
-    }
+  
 
     public void OnClickEncode()
     {
@@ -46,5 +33,19 @@ public class QRCodeGenerator : MonoBehaviour
 
         _rawImageReceiver.texture = _storeEncodedTexture;
     }
-    
+
+    private Color32[] Encode(string textForEncoding, int width, int height)
+    {
+        BarcodeWriter writer = new BarcodeWriter()
+        {
+            Format = BarcodeFormat.QR_CODE,
+            Options =
+            {
+                Height = height,
+                Width = width
+            }
+        };
+
+        return writer.Write(textForEncoding);
+    }
 }

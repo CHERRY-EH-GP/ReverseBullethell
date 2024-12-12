@@ -11,13 +11,19 @@ public enum EntityType
 public class EntityData
 {
     EntityType type;
-    
+
     //variables
-    protected Vector2 position, LookDirection;
+
+    protected Vector2 position;
+    public Vector2 Position { get { return position; } set { position = value; } }
+
+    protected Vector2 LookDirection;
 
     protected float collisionRange = 1f;
 
     protected float health;
+
+    protected float speed = 5;
 
     public bool isInView;
 
@@ -25,9 +31,10 @@ public class EntityData
     public virtual void TakeDamage(float damage){ health -= damage;  }
     public virtual void InitHealth(float value) { health = value; }
 
+
     public float GetCollRange() { return collisionRange; }
 
-    public Vector2 GetPosition() { return position; }
+    public float GetSpeed(){ return speed; }
 }
 
 public class EnemyData : EntityData
@@ -58,11 +65,14 @@ public class EnemyData : EntityData
         // TODO remove value from healthColor
     }
 
-    public EnemyData(Vector3 startPos, bool dropReward, float health)
+    public EnemyData(Vector3 startPos,  float health, bool isInView = false, bool dropReward = false)
     {
         position = startPos;
-        this.dropReward = dropReward;
         InitHealth(health);
+
+        // optional parameters
+        this.isInView = isInView;
+        this.dropReward = dropReward;
     }
 
 }
