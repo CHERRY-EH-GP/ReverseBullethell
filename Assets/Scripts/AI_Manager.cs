@@ -4,6 +4,9 @@ using UnityEngine;
 
 public class AI_Manager : MonoBehaviour
 {
+    [Header("Settings")]
+    public CameraBounds cameraBounds;
+
     public EnemyView enemyView;
 
     public PlayerView playerView;
@@ -11,8 +14,9 @@ public class AI_Manager : MonoBehaviour
     [Tooltip("Spawn distance from player")]
     public float spawnDistance = 30f;
 
-    Dictionary<EnemyData, EnemyView> enemies = new Dictionary<EnemyData, EnemyView>();
 
+
+    Dictionary<EnemyData, EnemyView> enemies = new Dictionary<EnemyData, EnemyView>();
     PlayerData playerData;
 
 
@@ -21,7 +25,6 @@ public class AI_Manager : MonoBehaviour
         playerData = new PlayerData(new Vector2(0,0), 500f);
 
         GenerateEnemies(100);
-
         // Enemies Attack must have a delay 
     }
 
@@ -32,28 +35,50 @@ public class AI_Manager : MonoBehaviour
 
     private void UpdateAI()
     {
-        foreach (KeyValuePair<EnemyData, EnemyView> enemyObject in enemies)
+        foreach (KeyValuePair<EnemyData, EnemyView> enemy in enemies)
         {
-            if (!enemyObject.Key.isInView) continue;
+            UpdateDataMovement(enemy);
+            UpdateView(enemy);
 
-            // Handle Movement - EnemyData
-            Vector2 newPosition = Vector2.MoveTowards(enemyObject.Key.Position, playerData.Position, enemyObject.Key.GetSpeed() * Time.deltaTime);
-            enemyObject.Key.Position = newPosition;
-
-            // Handle Movement - EnemyView
-            enemyObject.Value.UpdatePositionAndRotation(newPosition, playerData.Position - enemyObject.Key.Position);
-
-            // Handle "Collisions"
-            float dist = Vector2.Distance(enemyObject.Key.Position, playerData.Position);
-            if (dist < enemyObject.Key.GetCollRange() + playerData.GetCollRange())
-            {
-                playerData.TakeDamage(0);
-                enemyObject.Key.TakeDamage(700f);
-            }
+            if (!enemy.Key.isInView) continue;
+            
+            UpdateViewMovement(enemy);
+            //CheckCollisions(enemy);
         }
     }
 
+    private void UpdateView(KeyValuePair<EnemyData, EnemyView> enemy)
+    {
 
+        enemy.Key.isInView = cameraBounds.bounds.Contains(enemy.Key.Position);
+
+        // TODO MAKE A POOL
+        enemy.Value.gameObject.SetActive(enemy.Key.isInView);
+    }
+
+    private void  UpdateViewMovement(KeyValuePair<EnemyData, EnemyView> enemy)
+    {
+        // Handle Movement - EnemyView
+        enemy.Value.UpdatePositionAndRotation(enemy.Key.Position, playerData.Position - enemy.Key.Position);
+    }
+
+    private void UpdateDataMovement(KeyValuePair<EnemyData, EnemyView> enemy)
+    {
+        // Handle Movement - EnemyData
+        Vector2 newPosition = Vector2.MoveTowards(enemy.Key.Position, playerData.Position, enemy.Key.GetSpeed() * Time.deltaTime);
+        enemy.Key.Position = newPosition;
+    }
+
+    private void CheckCollisions(KeyValuePair<EnemyData, EnemyView> enemy)
+    {
+        // Handle "Collisions"
+        float dist = Vector2.Distance(enemy.Key.Position, playerData.Position);
+        if (dist < enemy.Key.GetCollRange() + playerData.GetCollRange())
+        {
+            playerData.TakeDamage(0);
+            enemy.Key.TakeDamage(20f);
+        }
+    }
 
     public void GenerateEnemies(int count)
     {
