@@ -17,7 +17,7 @@ public class EntityData
     protected Vector2 position;
     public Vector2 Position { get { return position; } set { position = value; } }
 
-    protected Vector2 LookDirection;
+    public Vector2 LookDirection;
 
     protected float collisionRange = 1f;
 

@@ -65,6 +65,12 @@ public class joypad : MonoBehaviour
         {
             joypadDot.anchoredPosition = ScreenPointToLocalRectPoint(mousePos, joypadBounds);
         }
+        else
+        {
+            //Vector2 screenPosJoypadBounds = LocalRectPointToScreenPoint(joypadBounds);
+            //Vector2 dir = (mousePos - screenPosJoypadBounds) * joypadMaxDistance;
+            //joypadDot.anchoredPosition = ScreenPointToLocalRectPoint(screenPosJoypadBounds + dir, joypadBounds);
+        }
 
         strength = Mathf.Clamp(magnitude / joypadMaxDistance, 0f, 1f);
     }

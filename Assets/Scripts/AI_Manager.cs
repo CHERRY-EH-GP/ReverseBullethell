@@ -14,9 +14,11 @@ public class AI_Manager : MonoBehaviour
     [Tooltip("Spawn distance from player")]
     public float spawnDistance = 30f;
 
-
-
     Dictionary<EnemyData, EnemyView> enemies = new Dictionary<EnemyData, EnemyView>();
+
+    Dictionary<EnemyData, EnemyData> neighboors = new Dictionary<EnemyData, EnemyData>();
+    float distance = 3f;
+
     PlayerData playerData;
 
 
@@ -56,10 +58,10 @@ public class AI_Manager : MonoBehaviour
         enemy.Value.gameObject.SetActive(enemy.Key.isInView);
     }
 
-    private void  UpdateViewMovement(KeyValuePair<EnemyData, EnemyView> enemy)
+    private void UpdateViewMovement(KeyValuePair<EnemyData, EnemyView> enemy)
     {
         // Handle Movement - EnemyView
-        enemy.Value.UpdatePositionAndRotation(enemy.Key.Position, playerData.Position - enemy.Key.Position);
+        enemy.Value.UpdatePositionAndRotation(enemy.Key.Position, enemy.Key.LookDirection);
     }
 
     private void UpdateDataMovement(KeyValuePair<EnemyData, EnemyView> enemy)
@@ -67,7 +69,29 @@ public class AI_Manager : MonoBehaviour
         // Handle Movement - EnemyData
         Vector2 newPosition = Vector2.MoveTowards(enemy.Key.Position, playerData.Position, enemy.Key.GetSpeed() * Time.deltaTime);
         enemy.Key.Position = newPosition;
+
+        //Handle Rotation
+        enemy.Key.LookDirection = playerData.Position - enemy.Key.Position;
     }
+
+    private void UpdateNeighboors()
+    {
+        foreach (KeyValuePair<EnemyData, EnemyView> enemy in enemies)
+        {
+            foreach (KeyValuePair<EnemyData, EnemyView> enemyTarget in enemies)
+            {
+                if(Vector2.Distance(enemy.Key.Position, enemyTarget.Key.Position) < distance)
+                {
+                    if(neighboors.ContainsKey(enemy.Key))
+                    {
+
+                    }
+                }
+            }
+        }
+    }
+
+
 
     private void CheckCollisions(KeyValuePair<EnemyData, EnemyView> enemy)
     {
