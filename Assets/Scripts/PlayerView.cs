@@ -2,13 +2,23 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerView : MonoBehaviour
+public class PlayerView : MonoBehaviour, IEntityView
 {
-    SpriteRenderer sprite;
+    public SpriteRenderer sprite;
 
-    void UpdatePositionAndRotation(Vector3 position, Vector3 lookDir)
+    public void UpdateHealthColor(Vector3 health)
+    {
+        sprite.color = new Color(health.x, health.y, health.z, 1f); // Alpha range is 0-1
+    }
+
+    public void UpdatePositionAndRotation(Vector3 position, Vector3 lookDir)
     {
         transform.position = position;
-        transform.rotation = Quaternion.LookRotation(lookDir);
+        transform.up = lookDir;
+    }
+    
+    public void SetActive(bool isActive)
+    {
+        gameObject.SetActive(isActive); // Delegate to the GameObject
     }
 }
